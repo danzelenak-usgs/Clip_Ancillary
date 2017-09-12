@@ -13,7 +13,7 @@ def run_subset(in_file, out_file, ext):
     # For reference:
     # GeoExtent = namedtuple('GeoExtent', ['x_min', 'y_max', 'x_max', 'y_min'])
 
-    run_trans ="gdal_translate -projwin {ulx} {uly} {lrx} {lry} {src} {dst}".format(ulx=ext.x_min, uly=ext.y_max,
+    run_trans ="gdal_translate -projwin {ulx} {uly} {lrx} {lry} -a_srs EPSG:5070 {src} {dst}".format(ulx=ext.x_min, uly=ext.y_max,
                                                                                      lrx=ext.x_max, lry=ext.y_min,
                                                                                      src=in_file,
                                                                                      dst=out_file)
