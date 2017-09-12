@@ -97,7 +97,7 @@ def main():
 
                         os.makedirs(out_dest)
 
-                    out_file = out_dest + os.sep + "h{h}v{v}_".format(h=args.hv[0], v=args.hv[1]) + name + ".tif"
+                    out_file = out_dest + os.sep + "h{h}v{v}_".format(h=hv[0], v=hv[1]) + name + ".tif"
 
                     run_subset(src_file, out_file, get_extent.TILE_EXTENT)
 
@@ -111,7 +111,7 @@ def main():
 
                     os.makedirs(out_dest)
 
-                out_file = out_dest + os.sep + "h{h}v{v}_".format(h=args.hv[0], v=args.hv[1]) + args.name + ".tif"
+                out_file = out_dest + os.sep + "h{h}v{v}_".format(h=hv[0], v=hv[1]) + args.name + ".tif"
 
                 run_subset(src_file, out_file, get_extent.TILE_EXTENT)
 
