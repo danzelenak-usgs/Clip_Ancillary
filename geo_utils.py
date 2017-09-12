@@ -4,7 +4,7 @@ import numpy as np
 
 class GetExtents:
 
-
+    GeoExtent = namedtuple('GeoExtent', ['x_min', 'y_max', 'x_max', 'y_min'])
     GeoAffine = namedtuple('GeoAffine', ['ul_x', 'x_res', 'rot_1', 'ul_y', 'rot_2', 'y_res'])
     GeoCoordinate = namedtuple('GeoCoordinate', ['x', 'y'])
     RowColumn = namedtuple('RowColumn', ['row', 'column'])
