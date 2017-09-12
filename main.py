@@ -92,13 +92,11 @@ def main():
 
                     src_file = args.input + os.sep + name + ".tif"
 
-                    out_dest = args.output + os.sep + "h{h}v{v}".format(h=hv[0], v=hv[1])
+                    if not os.path.exists(args.output):
 
-                    if not os.path.exists(out_dest):
+                        os.makedirs(args.output)
 
-                        os.makedirs(out_dest)
-
-                    out_file = out_dest + os.sep + "h{h}v{v}_".format(h=args.hv[0], v=args.hv[1]) + name + ".tif"
+                    out_file = args.output + os.sep + "h{h}v{v}_".format(h=args.hv[0], v=args.hv[1]) + name + ".tif"
 
                     run_subset(src_file, out_file, get_extent.TILE_EXTENT)
 
@@ -106,13 +104,11 @@ def main():
 
                 src_file = args.input + os.sep + args.name + ".tif"
 
-                out_dest = args.output + os.sep + "h{h}v{v}".format(h=hv[0], v=hv[1])
+                if not os.path.exists(args.output):
 
-                if not os.path.exists(out_dest):
+                    os.makedirs(args.output)
 
-                    os.makedirs(out_dest)
-
-                out_file = out_dest + os.sep + "h{h}v{v}_".format(h=args.hv[0], v=args.hv[1]) + args.name + ".tif"
+                out_file = args.output + os.sep + "h{h}v{v}_".format(h=args.hv[0], v=args.hv[1]) + args.name + ".tif"
 
                 run_subset(src_file, out_file, get_extent.TILE_EXTENT)
 
@@ -128,12 +124,11 @@ def main():
 
                 src_file = args.input + os.sep + name + ".tif"
 
-                out_dest = args.output + os.sep + "h{h}v{v}".format(h=hv[0], v=hv[1])
+                if not os.path.exists(args.output):
 
-                if not os.path.exists(out_dest):
-                    os.makedirs(out_dest)
+                    os.makedirs(args.output)
 
-                out_file = out_dest + os.sep + "h{h}v{v}_".format(h=args.hv[0], v=args.hv[1]) + name + ".tif"
+                out_file = args.output + os.sep + "h{h}v{v}_".format(h=args.hv[0], v=args.hv[1]) + name + ".tif"
 
                 run_subset(src_file, out_file, get_extent.TILE_EXTENT)
 
@@ -141,12 +136,11 @@ def main():
 
             src_file = args.input + os.sep + args.name + ".tif"
 
-            out_dest = args.output + os.sep + "h{h}v{v}".format(h=hv[0], v=hv[1])
+            if not os.path.exists(args.output):
 
-            if not os.path.exists(out_dest):
-                os.makedirs(out_dest)
+                os.makedirs(args.output)
 
-            out_file = out_dest + os.sep + "h{h}v{v}_".format(h=args.hv[0], v=args.hv[1]) + args.name + ".tif"
+            out_file = args.output + os.sep + "h{h}v{v}_".format(h=args.hv[0], v=args.hv[1]) + args.name + ".tif"
 
             run_subset(src_file, out_file, get_extent.TILE_EXTENT)
 
