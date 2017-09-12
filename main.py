@@ -46,7 +46,6 @@ def main():
             all_hv.append((h, v))
 
 
-
     """
     # Can use geo_utils to obtain these values
    
@@ -70,7 +69,7 @@ def main():
     parser.add_argument("-n", "--name", type=str, required=False, choices = all_names,
                       help="Specify the product to clip, if no product selected then all products will be clipped")
 
-    parser.add_argument('-hv', nargs=2, type=int, required=False, metavar=('HH (0-32)', 'VV (0-21)'),
+    parser.add_argument('-hv', nargs=2, type=str, required=False, metavar=('HH (0-32)', 'VV (0-21)'),
                         help='Horizontal and vertical ARD grid identifiers.  WARNING:  if no chip identifier is supplied all'
                              ' 726 chips will be processed!')
 
@@ -92,11 +91,13 @@ def main():
 
                     src_file = args.input + os.sep + name + ".tif"
 
-                    if not os.path.exists(args.output):
+                    out_dest = args.output + os.sep + "{}_tile".format(name)
 
-                        os.makedirs(args.output)
+                    if not os.path.exists(out_dest):
 
-                    out_file = args.output + os.sep + "h{h}v{v}_".format(h=args.hv[0], v=args.hv[1]) + name + ".tif"
+                        os.makedirs(out_dest)
+
+                    out_file = out_dest + os.sep + "h{h}v{v}_".format(h=args.hv[0], v=args.hv[1]) + name + ".tif"
 
                     run_subset(src_file, out_file, get_extent.TILE_EXTENT)
 
@@ -104,17 +105,19 @@ def main():
 
                 src_file = args.input + os.sep + args.name + ".tif"
 
-                if not os.path.exists(args.output):
+                out_dest = args.output + os.sep + "{}_tile".format(args.name)
 
-                    os.makedirs(args.output)
+                if not os.path.exists(out_dest):
 
-                out_file = args.output + os.sep + "h{h}v{v}_".format(h=args.hv[0], v=args.hv[1]) + args.name + ".tif"
+                    os.makedirs(out_dest)
+
+                out_file = out_dest + os.sep + "h{h}v{v}_".format(h=args.hv[0], v=args.hv[1]) + args.name + ".tif"
 
                 run_subset(src_file, out_file, get_extent.TILE_EXTENT)
 
     else:
 
-        get_extent = GetExtents(args.hv[0], args.hv[1])
+        get_extent = GetExtents(int(args.hv[0]), int(args.hv[1]))
 
         if args.name is None:
 
@@ -124,11 +127,15 @@ def main():
 
                 src_file = args.input + os.sep + name + ".tif"
 
-                if not os.path.exists(args.output):
+                out_dest = args.output + os.sep + "{}_tile".format(name)
 
-                    os.makedirs(args.output)
+                if not os.path.exists(out_dest):
 
-                out_file = args.output + os.sep + "h{h}v{v}_".format(h=args.hv[0], v=args.hv[1]) + name + ".tif"
+                    os.makedirs(out_dest)
+
+                out_file = out_dest + os.sep + "h{h}v{v}_".format(h=str(args.hv[0]), v=str(args.hv[1])) + name + ".tif"
+
+                print("\nProcessing {}\n".format(name))
 
                 run_subset(src_file, out_file, get_extent.TILE_EXTENT)
 
@@ -136,11 +143,13 @@ def main():
 
             src_file = args.input + os.sep + args.name + ".tif"
 
-            if not os.path.exists(args.output):
+            out_dest = args.output + os.sep + "{}_tile".format(args.name)
 
-                os.makedirs(args.output)
+            if not os.path.exists(out_dest):
 
-            out_file = args.output + os.sep + "h{h}v{v}_".format(h=args.hv[0], v=args.hv[1]) + args.name + ".tif"
+                os.makedirs(out_dest)
+
+            out_file = out_dest + os.sep + "h{h}v{v}_".format(h=args.hv[0], v=args.hv[1]) + args.name + ".tif"
 
             run_subset(src_file, out_file, get_extent.TILE_EXTENT)
 
