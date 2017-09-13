@@ -1,11 +1,25 @@
 import os
 import subprocess
 import argparse
-from osgeo import gdal
 from geo_utils import GetExtents
 
-ancillary_dtype = {"aspect" : "Int16", "slope" : "Float32", "posidex" : "Float32", "dem" : "Float32",
-             "trends" : "Byte", "mpw" : "Byte"}
+
+def get_files(arg_in, arg_name, arg_out):
+    # TODO add function to replace repeated code
+    """
+    src_file = arg_in + os.sep + arg_name + ".tif"
+
+    out_dest = arg_out + os.sep + "{}_tile".format(arg_name)
+
+    if not os.path.exists(out_dest):
+
+        os.makedirs(out_dest)
+
+    out_file = out_dest + os.sep + "h{h}v{v}_".format(h=hv[0], v=hv[1]) + arg_name + ".tif"
+
+    return src_file, out_file
+    """
+    pass
 
 
 def run_subset(in_file, out_file, ext):
@@ -13,7 +27,7 @@ def run_subset(in_file, out_file, ext):
     # For reference:
     # GeoExtent = namedtuple('GeoExtent', ['x_min', 'y_max', 'x_max', 'y_min'])
 
-    run_trans ="gdal_translate -projwin {ulx} {uly} {lrx} {lry} -a_srs EPSG:5070 {src} {dst}".format(ulx=ext.x_min, uly=ext.y_max,
+    run_trans ="gdal_translate -projwin {ulx} {uly} {lrx} {lry} -co COMPRESS=DEFLATE {src} {dst}".format(ulx=ext.x_min, uly=ext.y_max,
                                                                                      lrx=ext.x_max, lry=ext.y_min,
                                                                                      src=in_file,
                                                                                      dst=out_file)
@@ -44,19 +58,6 @@ def main():
             else: v = str(v)
 
             all_hv.append((h, v))
-
-
-    """
-    # Can use geo_utils to obtain these values
-   
-    x_min = [-2565585 + i * 150000 for i in range(33)]
-
-    y_max = [3314805 - i * 150000 for i in range(22)]
-
-    x_max = [i + 150000 for i in x_min]
-
-    y_min = [i - 150000 for i in y_max]
-    """
 
     parser = argparse.ArgumentParser()
 
