@@ -126,4 +126,3 @@ class GetExtents:
         return {coord_keys[ind_x + ind_y * 100] : self.GeoCoordinate(x=x, y=y)
                 for ind_y, y in enumerate(pixel_y_coords)
                 for ind_x, x in enumerate(pixel_x_coords)}
-
