@@ -3,6 +3,7 @@ import subprocess
 import argparse
 from geo_utils import GetExtents
 
+WKT = "ard_srs.wkt"
 
 def get_files(arg_in, arg_name, arg_out):
     # TODO add function to replace repeated code
@@ -27,10 +28,12 @@ def run_subset(in_file, out_file, ext):
     # For reference:
     # GeoExtent = namedtuple('GeoExtent', ['x_min', 'y_max', 'x_max', 'y_min'])
 
-    run_trans ="gdal_translate -projwin {ulx} {uly} {lrx} {lry} -co COMPRESS=DEFLATE {src} {dst}".format(ulx=ext.x_min, uly=ext.y_max,
-                                                                                     lrx=ext.x_max, lry=ext.y_min,
-                                                                                     src=in_file,
-                                                                                     dst=out_file)
+    run_trans ="gdal_translate -projwin {ulx} {uly} {lrx} {lry} -a_srs {wkt} -co COMPRESS=DEFLATE {src} {dst}".format(
+        ulx=ext.x_min, uly=ext.y_max,
+        lrx=ext.x_max, lry=ext.y_min,
+        wkt=WKT,
+        src=in_file,
+        dst=out_file)
 
     subprocess.call(run_trans, shell=True)
 
