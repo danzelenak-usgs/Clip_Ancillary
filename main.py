@@ -87,6 +87,12 @@ def main():
 
             get_extent = GetExtents(int(hv[0]), int(hv[1]))
 
+            out_dest = args.output + os.sep + "h{h}v{v}".format(h=hv[0], v=hv[1])
+
+            if not os.path.exists(out_dest):
+
+                os.makedirs(out_dest)
+
             if args.name is None:
 
             # Loop through all available file names for each tile
@@ -95,13 +101,7 @@ def main():
 
                     src_file = args.input + os.sep + name + ".tif"
 
-                    out_dest = args.output + os.sep + "{}_tile".format(name)
-
-                    if not os.path.exists(out_dest):
-
-                        os.makedirs(out_dest)
-
-                    out_file = out_dest + os.sep + "h{h}v{v}_".format(h=hv[0], v=hv[1]) + name + ".tif"
+                    out_file = out_dest + os.sep + name + ".tif"
 
                     run_subset(src_file, out_file, get_extent.TILE_EXTENT)
 
@@ -109,19 +109,19 @@ def main():
 
                 src_file = args.input + os.sep + args.name + ".tif"
 
-                out_dest = args.output + os.sep + "{}_tile".format(args.name)
-
-                if not os.path.exists(out_dest):
-
-                    os.makedirs(out_dest)
-
-                out_file = out_dest + os.sep + "h{h}v{v}_".format(h=hv[0], v=hv[1]) + args.name + ".tif"
+                out_file = out_dest + os.sep + args.name + ".tif"
 
                 run_subset(src_file, out_file, get_extent.TILE_EXTENT)
 
     else:
 
         get_extent = GetExtents(int(args.hv[0]), int(args.hv[1]))
+
+        out_dest = args.output + os.sep + "h{h}v{v}".format(h=args.hv[0], v=args.hv[1])
+
+        if not os.path.exists(out_dest):
+
+            os.makedirs(out_dest)
 
         if args.name is None:
 
@@ -131,13 +131,7 @@ def main():
 
                 src_file = args.input + os.sep + name + ".tif"
 
-                out_dest = args.output + os.sep + "{}_tile".format(name)
-
-                if not os.path.exists(out_dest):
-
-                    os.makedirs(out_dest)
-
-                out_file = out_dest + os.sep + "h{h}v{v}_".format(h=str(args.hv[0]), v=str(args.hv[1])) + name + ".tif"
+                out_file = out_dest + os.sep + name + ".tif"
 
                 print("\nProcessing {}\n".format(name))
 
@@ -147,13 +141,7 @@ def main():
 
             src_file = args.input + os.sep + args.name + ".tif"
 
-            out_dest = args.output + os.sep + "{}_tile".format(args.name)
-
-            if not os.path.exists(out_dest):
-
-                os.makedirs(out_dest)
-
-            out_file = out_dest + os.sep + "h{h}v{v}_".format(h=args.hv[0], v=args.hv[1]) + args.name + ".tif"
+            out_file = out_dest + os.sep + args.name + ".tif"
 
             run_subset(src_file, out_file, get_extent.TILE_EXTENT)
 
