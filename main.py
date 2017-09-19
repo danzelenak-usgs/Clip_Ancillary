@@ -85,6 +85,8 @@ def main():
 
         for hv in all_hv:
 
+            print("\n\tWorking on tile ", hv)
+
             get_extent = GetExtents(int(hv[0]), int(hv[1]))
 
             out_dest = args.output + os.sep + "h{h}v{v}".format(h=hv[0], v=hv[1])
@@ -103,7 +105,9 @@ def main():
 
                     out_file = out_dest + os.sep + name + ".tif"
 
-                    run_subset(src_file, out_file, get_extent.TILE_EXTENT)
+                    if not os.path.exists(out_file):
+
+                        run_subset(src_file, out_file, get_extent.TILE_EXTENT)
 
             else:
 
@@ -111,7 +115,9 @@ def main():
 
                 out_file = out_dest + os.sep + args.name + ".tif"
 
-                run_subset(src_file, out_file, get_extent.TILE_EXTENT)
+                if not os.path.exists(out_file):
+
+                    run_subset(src_file, out_file, get_extent.TILE_EXTENT)
 
     else:
 
@@ -133,9 +139,11 @@ def main():
 
                 out_file = out_dest + os.sep + name + ".tif"
 
-                print("\nProcessing {}\n".format(name))
+                if not os.path.exists(out_file):
 
-                run_subset(src_file, out_file, get_extent.TILE_EXTENT)
+                    print("\nProcessing {}\n".format(name))
+
+                    run_subset(src_file, out_file, get_extent.TILE_EXTENT)
 
         else:
 
@@ -143,7 +151,9 @@ def main():
 
             out_file = out_dest + os.sep + args.name + ".tif"
 
-            run_subset(src_file, out_file, get_extent.TILE_EXTENT)
+            if not os.path.exists(out_file):
+
+                run_subset(src_file, out_file, get_extent.TILE_EXTENT)
 
 
 if __name__ == '__main__':
