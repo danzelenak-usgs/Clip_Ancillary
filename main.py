@@ -91,7 +91,7 @@ def main_work(indir, outdir, aux=None, hv=None):
         aux_ = list(aux)
 
     for tile in hv_:
-        get_extent = GetExtents(int(hv_[0]), int(hv_[1]))
+        get_extent = GetExtents(int(tile[0]), int(tile[1]))
         out_file = None
         tarlist = []
         for prod in aux_:
