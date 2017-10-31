@@ -12,9 +12,9 @@ WKT = "ard_srs.wkt"
 
 all_aux = ["aspect", "slope", "posidex", "dem", "trends", "mpw"]
 
-all_hv = []
-
 name_pattern = "AUX_CU_HHHVVV_20000731_CURRENT-DATE_V01_AUX-NAME.tif"
+
+all_hv = []
 
 for h in range(33):
 
@@ -110,10 +110,7 @@ def main_work(indir, outdir, aux=None, hv=None):
 
         with tarfile.open(outtar, "w") as tar:
             for f in tarlist:
-                tar.addfile(tarfile.TarInfo(os.path.basename(f), open(f)))
-
-        for f in tarlist:
-            tar.addfile(tarfile.TarInfo(os.path.basename(f), open(f)))
+                tar.addfile(tarfile.TarInfo(os.path.basename(f)), open(f))
 
     return None
 
@@ -127,8 +124,8 @@ def main():
     parser.add_argument("-o", "--output", dest="outdir", type=str, required=True,
                       help="Full path to the output location")
 
-    parser.add_argument("-aux", dest="aux", type=str, required=False, choices = all_names,
-                        metavar=all_names,
+    parser.add_argument("-aux", dest="aux", type=str, required=False, choices = all_aux,
+                        metavar=all_aux,
                         help="Specify the product to clip, if no product is selected then all products will be clipped")
 
     parser.add_argument('-hv', dest="hv", nargs=2, type=str, required=False,
