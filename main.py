@@ -106,9 +106,9 @@ def main_work(indir, outdir, aux=None, hv=None):
 
                 tarlist.append(out_file)
 
-        outtar = outdir + os.sep + os.path.basename(out_file)[:35] + ".tar"
+        archive = outdir + os.sep + os.path.basename(out_file)[:35] + ".tar"
 
-        with tarfile.open(outtar, "w") as tar:
+        with tarfile.open(archive, "w") as tar:
             for f in tarlist:
                 tar.addfile(tarfile.TarInfo(os.path.basename(f)), open(f))
 
