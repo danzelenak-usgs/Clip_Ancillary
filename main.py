@@ -1,26 +1,54 @@
+
 import os
 import subprocess
 import argparse
+import datetime as dt
+import tarfile
 from geo_utils import GetExtents
+
+now = dt.datetime.now()
 
 WKT = "ard_srs.wkt"
 
-def get_files(arg_in, arg_name, arg_out):
-    # TODO add function to replace repeated code
+all_aux = ["aspect", "slope", "posidex", "dem", "trends", "mpw"]
+
+all_hv = []
+
+name_pattern = "AUX_CU_HHHVVV_20000731_CURRENT-DATE_V01_AUX-NAME.tif"
+
+for h in range(33):
+
+    for v in range(22):
+
+        if len(str(h)) == 1: h = "0" + str(h)
+
+        else: h = str(h)
+
+        if len(str(v)) == 1: v = "0" + str(v)
+
+        else: v = str(v)
+
+        all_hv.append((h, v))
+
+
+def make_filename(aux, hv, out_dir):
     """
-    src_file = arg_in + os.sep + arg_name + ".tif"
 
-    out_dest = arg_out + os.sep + "{}_tile".format(arg_name)
-
-    if not os.path.exists(out_dest):
-
-        os.makedirs(out_dest)
-
-    out_file = out_dest + os.sep + "h{h}v{v}_".format(h=hv[0], v=hv[1]) + arg_name + ".tif"
-
-    return src_file, out_file
+    :param aux:
+    :param hv:
+    :param out_file:
+    :return:
     """
-    pass
+    replace = {"HHHVVV": f"0{str(hv[0])}0{str(hv[1])}",
+               "CURRENT-DATE": now.strftime("%Y%m%d"),
+               "AUX-NAME": aux.upper()}
+
+    out_file = name_pattern
+
+    for key in replace.keys():
+        out_file = out_file.replace(key, replace[key])
+
+    return f"{out_dir}{os.sep}{out_file}"
 
 
 def run_subset(in_file, out_file, ext):
@@ -40,120 +68,78 @@ def run_subset(in_file, out_file, ext):
     return None
 
 
+def main_work(indir, outdir, aux=None, hv=None):
+    """
+
+    :param indir:
+    :param outdir:
+    :param aux:
+    :param hv:
+    :return:
+    """
+    if not os.path.exists(outdir):
+        os.makedirs(outdir)
+
+    if hv is None:
+        hv_ = all_hv
+    else:
+        hv_ = list(hv)
+
+    if aux is None:
+        aux_ = all_aux
+    else:
+        aux_ = list(aux)
+
+    for tile in hv_:
+        get_extent = GetExtents(int(hv_[0]), int(hv_[1]))
+        out_file = None
+        tarlist = []
+        for prod in aux_:
+            print(f"\nWorking on TILE: {tile}\n\t\tAUX: {prod}")
+
+            out_file = make_filename(tile, prod, outdir)
+
+            src_file = f"{indir}{os.sep}{prod}.tif"
+
+            if not os.path.exists(out_file):
+                run_subset(src_file, out_file, get_extent.TILE_EXTENT)
+
+                tarlist.append(out_file)
+
+        outtar = outdir + os.sep + os.path.basename(out_file)[:35] + ".tar"
+
+        with tarfile.open(outtar, "w") as tar:
+            for f in tarlist:
+                tar.addfile(tarfile.TarInfo(os.path.basename(f), open(f)))
+
+        for f in tarlist:
+            tar.addfile(tarfile.TarInfo(os.path.basename(f), open(f)))
+
+    return None
+
+
 def main():
-
-    all_names = ["aspect", "slope", "posidex", "dem", "trends", "mpw"]
-
-    # all_hv = [(str(h), str(v)) for h in range(33) for v in range(22)]
-
-    all_hv = []
-
-    for h in range(33):
-
-        for v in range(22):
-
-            if len(str(h)) == 1: h = "0" + str(h)
-
-            else: h = str(h)
-
-            if len(str(v)) == 1: v = "0" + str(v)
-
-            else: v = str(v)
-
-            all_hv.append((h, v))
-
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("-i", "--input", type=str, required=True,
-                      help="Full path to the directory containing the ancillary data products")
+    parser.add_argument("-i", "--input", dest="indir", type=str, required=True,
+                      help="Full path to the directory containing the CONUS ancillary data products")
 
-    parser.add_argument("-o", "--output", type=str, required=True,
+    parser.add_argument("-o", "--output", dest="outdir", type=str, required=True,
                       help="Full path to the output location")
 
-    parser.add_argument("-n", "--name", type=str, required=False, choices = all_names,
-                      help="Specify the product to clip, if no product selected then all products will be clipped")
+    parser.add_argument("-aux", dest="aux", type=str, required=False, choices = all_names,
+                        metavar=all_names,
+                        help="Specify the product to clip, if no product is selected then all products will be clipped")
 
-    parser.add_argument('-hv', nargs=2, type=str, required=False, metavar=('HH (0-32)', 'VV (0-21)'),
-                        help='Horizontal and vertical ARD grid identifiers.  WARNING:  if no chip identifier is supplied all'
+    parser.add_argument('-hv', dest="hv", nargs=2, type=str, required=False,
+                        metavar=('HH 0-32', 'VV 0-21'),
+                        help='Horizontal and vertical ARD grid identifiers.  ' \
+                             'WARNING:  if no chip identifier is supplied all'
                              ' 726 chips will be processed!')
 
     args = parser.parse_args()
 
-    if args.hv is None:
-
-        # Loop through all available HV's here
-
-        for hv in all_hv:
-
-            print("\n\tWorking on tile ", hv)
-
-            get_extent = GetExtents(int(hv[0]), int(hv[1]))
-
-            out_dest = args.output + os.sep + "h{h}v{v}".format(h=hv[0], v=hv[1])
-
-            if not os.path.exists(out_dest):
-
-                os.makedirs(out_dest)
-
-            if args.name is None:
-
-            # Loop through all available file names for each tile
-
-                for name in all_names:
-
-                    src_file = args.input + os.sep + name + ".tif"
-
-                    out_file = out_dest + os.sep + name + ".tif"
-
-                    if not os.path.exists(out_file):
-
-                        run_subset(src_file, out_file, get_extent.TILE_EXTENT)
-
-            else:
-
-                src_file = args.input + os.sep + args.name + ".tif"
-
-                out_file = out_dest + os.sep + args.name + ".tif"
-
-                if not os.path.exists(out_file):
-
-                    run_subset(src_file, out_file, get_extent.TILE_EXTENT)
-
-    else:
-
-        get_extent = GetExtents(int(args.hv[0]), int(args.hv[1]))
-
-        out_dest = args.output + os.sep + "h{h}v{v}".format(h=args.hv[0], v=args.hv[1])
-
-        if not os.path.exists(out_dest):
-
-            os.makedirs(out_dest)
-
-        if args.name is None:
-
-            # Loop through all available file names for each tile
-
-            for name in all_names:
-
-                src_file = args.input + os.sep + name + ".tif"
-
-                out_file = out_dest + os.sep + name + ".tif"
-
-                if not os.path.exists(out_file):
-
-                    print("\nProcessing {}\n".format(name))
-
-                    run_subset(src_file, out_file, get_extent.TILE_EXTENT)
-
-        else:
-
-            src_file = args.input + os.sep + args.name + ".tif"
-
-            out_file = out_dest + os.sep + args.name + ".tif"
-
-            if not os.path.exists(out_file):
-
-                run_subset(src_file, out_file, get_extent.TILE_EXTENT)
+    main_work(**vars(args))
 
 
 if __name__ == '__main__':
