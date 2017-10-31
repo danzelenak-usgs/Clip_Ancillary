@@ -31,7 +31,7 @@ for h in range(33):
         all_hv.append((h, v))
 
 
-def make_filename(aux, hv, out_dir):
+def make_filename(hv, aux, out_dir):
     """
 
     :param aux:
@@ -39,7 +39,7 @@ def make_filename(aux, hv, out_dir):
     :param out_file:
     :return:
     """
-    replace = {"HHHVVV": f"0{str(hv[0])}0{str(hv[1])}",
+    replace = {"HHHVVV": f"0{hv[0]}0{hv[1]}",
                "CURRENT-DATE": now.strftime("%Y%m%d"),
                "AUX-NAME": aux.upper()}
 
@@ -83,17 +83,20 @@ def main_work(indir, outdir, aux=None, hv=None):
     if hv is None:
         hv_ = all_hv
     else:
-        hv_ = list(hv)
+        hv_ = [hv]
 
     if aux is None:
         aux_ = all_aux
     else:
-        aux_ = list(aux)
+        aux_ = [aux]
 
     for tile in hv_:
         get_extent = GetExtents(int(tile[0]), int(tile[1]))
+
         out_file = None
+
         tarlist = []
+
         for prod in aux_:
             print(f"\nWorking on TILE: {tile}\n\t\tAUX: {prod}")
 
@@ -110,7 +113,9 @@ def main_work(indir, outdir, aux=None, hv=None):
 
         with tarfile.open(archive, "w") as tar:
             for f in tarlist:
-                tar.addfile(tarfile.TarInfo(os.path.basename(f)), open(f))
+                tar.add(f, os.path.basename(f))
+                
+                os.remove(f)
 
     return None
 
